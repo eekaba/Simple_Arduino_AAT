@@ -6,8 +6,8 @@
 #define RADIANS PI / 180
 
 //SET ANTENNA TRACKER LOCATION
-#define ATT_LAT //LAT
-#define ATT_LON //LON
+#define AAT_LAT //LAT
+#define AAT_LON //LON
 
 float vehicle_lat;
 float vehicle_lon;
@@ -94,8 +94,8 @@ double calculateBearing(double baseLat, double baseLon, double droneLat, double 
 
 void loop() {
   readPos();
-  dist = calcGPSDist(ATT_LAT, ATT_LON, vehicle_lat, vehicle_lon);
-  bear = calculateBearing(ATT_LAT, ATT_LON, vehicle_lat, vehicle_lon);
+  dist = calcGPSDist(AAT_LAT, AAT_LON, vehicle_lat, vehicle_lon);
+  bear = calculateBearing(AAT_LAT, AAT_LON, vehicle_lat, vehicle_lon);
   Serial.print("Latitude: ");
   Serial.println(vehicle_lat, 6);
   Serial.print("Longitude: ");
