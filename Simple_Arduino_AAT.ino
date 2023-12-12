@@ -5,9 +5,16 @@
 #define EARTH_RADIUS 6372797.56085
 #define RADIANS PI / 180
 
-float lat;
-float lon;
-float alt;
+//SET ANTENNA TRACKER LOCATION
+#define ATT_LAT //LAT
+#define ATT_LON //LON
+
+float vehicle_lat;
+float vehicle_lon;
+float vehicle_alt;
+float dist;
+float bear;
+int inc = 0;
 mavlink_message_t msg;
 mavlink_status_t status;
 double haversine;
@@ -40,9 +47,9 @@ void readPos() {
       mavlink_global_position_int_t position;
       mavlink_msg_global_position_int_decode(&msg, &position);
 
-      lat = position.lat / 1e7;
-      lon = position.lon / 1e7;
-      alt = position.relative_alt / 1e3;
+      vehicle_lat = position.lat / 1e7;
+      vehicle_lon = position.lon / 1e7;
+      vehicle_alt = position.relative_alt / 1e3;
 
       break;
     }
@@ -87,12 +94,21 @@ double calculateBearing(double baseLat, double baseLon, double droneLat, double 
 
 void loop() {
   readPos();
+  dist = calcGPSDist(ATT_LAT, ATT_LON, vehicle_lat, vehicle_lon);
+  bear = calculateBearing(ATT_LAT, ATT_LON, vehicle_lat, vehicle_lon);
   Serial.print("Latitude: ");
-  Serial.println(lat, 6);
+  Serial.println(vehicle_lat, 6);
   Serial.print("Longitude: ");
-  Serial.println(lon, 6);
+  Serial.println(vehicle_lon, 6);
   Serial.print("Altitude: ");
-  Serial.println(alt, 2);
+  Serial.println(vehicle_alt, 2);
+  Serial.print("Dist: ");
+  Serial.println(dist, 2);
+  Serial.print("Bearing: ");
+  Serial.println(bear, 2);
+  Serial.print("Incremental: ");
+  Serial.println(inc);
+  inc = inc+1;
   Serial.print("\n");
-  delay(1000);
+  delay(200);
 }
