@@ -13,7 +13,7 @@ Servo yaw;
 //SET ANTENNA TRACKER LOCATION
 #define AAT_LAT -35.36293361883152
 #define AAT_LON 149.16539769052687
-#define AAT_BEARING 260 //Initial heading when yaw centered, will replace with compass and implement calibration
+#define AAT_BEARING 270 //Initial heading when yaw centered, will replace with compass and implement calibration
 
 float vehicle_lat;
 float vehicle_lon;
@@ -141,11 +141,14 @@ float pitchAngleCalc(float distance, float altitude) {
   return out;
 }
 
-int yawAngleCalc(float bearing) {
+int yawAngleCalc(int bearing) {
   float upperLimit;
   float lowerLimit;
   int out;
+  out = map(bearing, 0, upperLimit, -85, 85);
+  //float og_bearing = bearing;
   //bool rollOverRight = false;
+  /*
   if (AAT_BEARING > 180) {
     if (bearing < AAT_BEARING - 85) {
       bearing = bearing + 360;
@@ -158,13 +161,33 @@ int yawAngleCalc(float bearing) {
   upperLimit = AAT_BEARING + 85;
   lowerLimit = AAT_BEARING - 85;
   out = map(bearing, lowerLimit, upperLimit, -85, 85);
-  if (out > 85) {
-    out = 85;
-  }
-  if (out < -85) {
+  Serial.println(out);
+  if (og_bearing) {
     out = -85;
   }
-  return out;
+  if (og_bearing > upperLimit) {
+    out = 85;
+  }
+  */
+  bearing = (bearing + 360) % 360;
+
+  int rawDifference = bearing - AAT_BEARING;
+
+  if (rawDifference > 180) {
+      rawDifference = rawDifference - 360;
+  } else if (rawDifference < -180) {
+      rawDifference = rawDifference + 360;
+  }
+  if (rawDifference > 85) {
+    rawDifference = 85;
+  }
+
+  if (rawDifference < -85) {
+    rawDifference = -85;
+  }
+
+  //Serial.println(rawDifference);
+  return rawDifference;
 }
 
 void loop() {
