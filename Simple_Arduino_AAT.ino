@@ -10,10 +10,10 @@ Servo yaw;
 #define EARTH_RADIUS 6372797.56085
 #define RADIANS PI / 180
 
-//SET ANTENNA TRACKER LOCATION
+//SET INITIAL ANTENNA TRACKER LOCATION AND BEARING
 #define AAT_LAT -35.36293361883152
 #define AAT_LON 149.16539769052687
-#define AAT_BEARING 270 //Initial heading when yaw centered, will replace with compass and implement calibration
+#define AAT_BEARING 270
 
 float vehicle_lat;
 float vehicle_lon;
@@ -32,6 +32,8 @@ double point_dist;
 //YAW 0 DEG: 1500
 //YAW 85 DEG RIGHT: 600
 //YAW 85 DEG LEFT: 2400
+
+// Function to set the pitch angle of the tracker in degrees
 void setPitchAngle(float angle) {
   if (angle > 90 || angle < 0) {
     return;
@@ -44,6 +46,7 @@ void setPitchAngle(float angle) {
   pitchR.writeMicroseconds(microsecondsR);
 }
 
+// Function to set the yaw angle of the tracker in degrees
 void setYawAngle(float angle) {
   if (angle > 85 || angle < -85) {
     return;
@@ -54,13 +57,18 @@ void setYawAngle(float angle) {
 }
 
 void setup() {
-  pitchL.attach(10);
-  pitchR.attach(9);
-  yaw.attach(8);
+  // Set servo pins
+  pitchL.attach(10); // Left pitch servo
+  pitchR.attach(9); // Right pitch servo
+  yaw.attach(8); // Yaw servo
+
+  // Set initial angles
   setYawAngle(0);
   setPitchAngle(45);
-  Serial.begin(115200);
-  Serial1.begin(57600); 
+
+  // Start serial interfaces
+  Serial.begin(115200); // USB for serial monitor
+  Serial1.begin(57600);  // UART for MAVLink
 }
 
 double toRadians(double degrees) {
